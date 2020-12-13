@@ -3,6 +3,7 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	setting "go_blog/pkg"
+	v1 "go_blog/routers/api/v1"
 )
 
 func InitRouter() *gin.Engine {
@@ -12,11 +13,19 @@ func InitRouter() *gin.Engine {
 
 	gin.SetMode(setting.RunMode)
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"msg": "hello",
-		})
-	})
+	apiv1 := r.Group("/api/v1")
+	{
+		apiv1.GET("/articles", v1.GetArticles)
+
+		apiv1.GET("/articles/:id", v1.GetArticle)
+
+		apiv1.POST("/articles", v1.AddArticle)
+
+		apiv1.PUT("/articles/:id", v1.EditArticle)
+
+		apiv1.DELETE("/articles/:id", v1.DeleteArticle)
+
+	}
 
 	return r
 }
