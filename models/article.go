@@ -28,3 +28,29 @@ func (a *Article) BeforeUpdate(scope *gorm.Scope) error {
 	scope.SetColumn("ModifiedOn", time.Now().Unix())
 	return nil
 }
+
+func GetArticle(id int) (a Article) {
+	db.First(&a, id)
+	return
+}
+
+func AddArticle(data map[string]interface{}) bool {
+	db.Create(&Article{
+		TagID:     data["tag_id"].(int),
+		Title:     data["title"].(string),
+		Desc:      data["desc"].(string),
+		Content:   data["content"].(string),
+		CreatedBy: data["created_by"].(string),
+		State:     data["state"].(int),
+	})
+	return true
+}
+
+func ExistsArticleByID(id int) bool {
+	var a Article
+	db.Where("id = ?", id).First(&a)
+	if a.ID > 0 {
+		return true
+	}
+	return false
+}
