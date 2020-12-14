@@ -2,6 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	"go_blog/middleware/jwt"
 	setting "go_blog/pkg"
 	"go_blog/routers/api"
 	v1 "go_blog/routers/api/v1"
@@ -17,6 +18,7 @@ func InitRouter() *gin.Engine {
 	r.POST("/auth", api.GetAuth)
 
 	apiv1 := r.Group("/api/v1")
+	apiv1.Use(jwt.JWT()) //使用中间件
 	{
 		apiv1.GET("/articles", v1.GetArticles)
 
