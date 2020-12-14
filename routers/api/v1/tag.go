@@ -114,5 +114,25 @@ func EditTags(c *gin.Context) {
 }
 
 func DeleteTags(c *gin.Context) {
+	id := com.StrTo(c.Param("id")).MustInt()
 
+	valid := validation.Validation{}
+	valid.Required(id, "id").Message("id必须存在")
+	valid.Min(id, 1, "id").Message("id必须大于0")
+
+	code := e.INVALID_PARAMS
+	if !valid.HasErrors() {
+		code = e.SUCCESS
+		if !models.ExistsTagByID(id) {
+			code = e.ERROR_NOT_EXIST_TAG
+		} else {
+			models.DeleteTag(id)
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  e.GetMsg(code),
+		"data": make(map[string]string),
+	})
 }
