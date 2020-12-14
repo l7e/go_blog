@@ -30,7 +30,9 @@ func (a *Article) BeforeUpdate(scope *gorm.Scope) error {
 }
 
 func GetArticle(id int) (a Article) {
+	//db.First(&a, id).Related(&a.Tag)	 链式调用,和下面两句效果是一样的
 	db.First(&a, id)
+	db.Model(&a).Related(&a.Tag)
 	return
 }
 
