@@ -34,6 +34,11 @@ func GetArticle(id int) (a Article) {
 	return
 }
 
+func GetArticles(offset, limit int, maps map[string]interface{}) (list []Article) {
+	db.Preload("Tag").Where(maps).Offset(offset).Limit(limit).Find(&list)
+	return
+}
+
 func AddArticle(data map[string]interface{}) bool {
 	db.Create(&Article{
 		TagID:     data["tag_id"].(int),
@@ -46,6 +51,16 @@ func AddArticle(data map[string]interface{}) bool {
 	return true
 }
 
+func EditArticle(id int, data map[string]interface{}) bool {
+	db.Model(&Article{}).Where("id = ? ", id).Updates(data)
+	return true
+}
+
+func DelArticle(id int) bool {
+	db.Where("id = ? ", id).Delete(&Article{})
+	return true
+}
+
 func ExistsArticleByID(id int) bool {
 	var a Article
 	db.Where("id = ?", id).First(&a)
@@ -53,4 +68,9 @@ func ExistsArticleByID(id int) bool {
 		return true
 	}
 	return false
+}
+
+func GetArticlesTotal(maps map[string]interface{}) (count int) {
+	db.Model(&Article{}).Where(maps).Count(&count)
+	return
 }
